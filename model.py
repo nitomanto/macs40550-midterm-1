@@ -1,0 +1,55 @@
+from mesa import Model
+from mesa.space import SingleGrid
+from agents import SchellingAgent
+from mesa.datacollection import DataCollector
+
+class SchellingModel(Model):
+    ## Define initiation, requiring all needed parameter inputs
+    def __init__(self, width = 50, height = 50, density = 0.7, 
+                 desired_share_alike = 0.5, dim_one_share = 0.7,
+                 dim_two_share = 0.0,
+                 #n_dimensions = 2,
+                 radius = 1, seed = None):
+        ## Inherit seed trait from parent class
+        super().__init__(seed=seed)
+        ## Define parameter values for model instance
+        self.width = width
+        self.height = height
+        self.density = density
+        self.desired_share_alike = desired_share_alike
+        self.dim_one_share = dim_one_share
+        self.dim_two_share = dim_two_share
+        self.radius = radius
+        #self.n_dimensions = n_dimensions
+        ## Create grid
+        self.grid = SingleGrid(width, height, torus = True)
+        ## Instantiate global happiness tracker
+        self.happy = 0
+        ## Define data collector, to collect happy agents and share of agents currently happy
+        self.datacollector = DataCollector(
+            model_reporters = {
+                "happy" : "happy",
+                "share_happy" : lambda m : (m.happy / len(m.agents)) * 100
+                if len(m.agents) > 0
+                else 0
+            }
+        )
+        ## Place agents randomly around the grid, randomly assigning them to agent types.
+        for cont, pos in self.grid.coord_iter():    
+            if self.random.random() < self.density:
+                rand1 = self.random.random()
+                rand2 = self.random.random()
+                type1 = 0 if rand1 < self.dim_one_share else 1
+                type2 = 0 if rand2 < self.dim_two_share else 1
+                self.grid.place_agent(SchellingAgent(self, [type1, type2]), pos)
+        ## Initialize datacollector
+        self.datacollector.collect(self)
+        #print(self.axes)
+
+    ## Define a step: reset global happiness tracker, agents move in random order, collect data
+    def step(self):
+        self.happy = 0
+        self.agents.shuffle_do("move")
+        self.datacollector.collect(self)
+        ## Run model until all agents are happy
+        self.running = self.happy < len(self.agents)
