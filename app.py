@@ -8,11 +8,10 @@ from mesa.visualization import (
 import numpy as np
 from scipy.spatial.distance import cosine
 
-## Define agent portrayal: color, shape, and size
+## EDIT!!!: defined two different functions for two dimensions
 def agent_portrayal_1(agent):
     return {
         "color": 'red' if agent.type[0] == 0 else 'blue',
-        #"blue" if agent.type == 1 else "red",
         "marker": "s",
         "size": 40,
     }
@@ -20,7 +19,6 @@ def agent_portrayal_1(agent):
 def agent_portrayal_2(agent):
     return {
         "color": 'green' if agent.type[1] == 0 else 'purple',
-        #"blue" if agent.type == 1 else "red",
         "marker": "s",
         "size": 40,
     }
@@ -98,8 +96,6 @@ HappyPlot = make_plot_component({"share_happy": "tab:green"})
 
 space_components = [make_space_component(agent_portrayal_1, draw_grid=False),
                     make_space_component(agent_portrayal_2, draw_grid=False)]
-
-print(len(space_components))
 
 ## Instantiate page inclusing all components
 page = SolaraViz(
