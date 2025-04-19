@@ -8,7 +8,6 @@ class SchellingModel(Model):
     def __init__(self, width = 50, height = 50, density = 0.7, 
                  desired_share_alike = 0.5, dim_one_share = 0.7,
                  dim_two_share = 0.0,
-                 #n_dimensions = 2,
                  radius = 1, seed = None):
         ## Inherit seed trait from parent class
         super().__init__(seed=seed)
@@ -20,7 +19,6 @@ class SchellingModel(Model):
         self.dim_one_share = dim_one_share
         self.dim_two_share = dim_two_share
         self.radius = radius
-        #self.n_dimensions = n_dimensions
         ## Create grid
         self.grid = SingleGrid(width, height, torus = True)
         ## Instantiate global happiness tracker
@@ -44,7 +42,6 @@ class SchellingModel(Model):
                 self.grid.place_agent(SchellingAgent(self, [type1, type2]), pos)
         ## Initialize datacollector
         self.datacollector.collect(self)
-        #print(self.axes)
 
     ## Define a step: reset global happiness tracker, agents move in random order, collect data
     def step(self):
